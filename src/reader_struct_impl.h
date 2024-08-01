@@ -275,6 +275,15 @@ void Struct<S>::BeginXml(std::vector<S>& obj, XmlReader& stream) {
 	stream.SetHandler(new StructVectorXmlHandler<S>(obj));
 }
 
+#ifdef WITH_PYLIB
+template <class S>
+void Struct<S>::ApplyTo(py::class_<S>& clazz) {
+	for (int i = 0; fields[i] != NULL; i++) {
+		fields[i]->AddPythonField(clazz);
+	}
+}
+#endif
+
 } //namespace lcf
 
 #include "fwd_struct_impl.h"
