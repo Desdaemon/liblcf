@@ -78,3 +78,7 @@ test_runner*
 # distribution archives
 liblcf-*.tar.*
 
+# python
+vcpkg_*
+.vs
+*.whl

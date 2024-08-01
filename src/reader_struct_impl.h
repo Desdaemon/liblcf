@@ -10,11 +10,13 @@
 #include <cstring>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 #include <type_traits>
 #include "lcf/ldb/reader.h"
 #include "lcf/lmt/reader.h"
 #include "lcf/lmu/reader.h"
 #include "lcf/lsd/reader.h"
+#include "lcf/string_view.h"
 #include "reader_struct.h"
 #include "lcf/rpg/save.h"
 #include "log.h"
@@ -274,6 +276,43 @@ template <class S>
 void Struct<S>::BeginXml(std::vector<S>& obj, XmlReader& stream) {
 	stream.SetHandler(new StructVectorXmlHandler<S>(obj));
 }
+
+#ifdef WITH_PYLIB
+template<typename, typename T>
+struct has_name_member : std::false_type {};
+
+template<typename T>
+struct has_name_member<T, decltype((void) T::name, void())> : std::true_type {};
+
+template<typename T>
+constexpr bool has_name_member_v = has_name_member<T, void>::value;
+
+template<typename, typename T>
+struct has_id : std::false_type {};
+
+template<typename T>
+struct has_id<T, decltype((void) T::ID, void())> : std::true_type {};
+
+template<typename T>
+constexpr bool has_id_v = has_id<T, void>::value;
+
+template <class S>
+void Struct<S>::ApplyTo(py::class_<S>& clazz) {
+	if constexpr (has_name_member_v<S>) {
+		clazz.def("__repr__", [](const S& obj) {
+			std::ostringstream os;
+			os << "<pylcf." << lcf::Struct<S>::name << " \"" << std::string(obj.name) + "\">";
+			return os.str();
+	  });
+	}
+	if constexpr (has_id_v<S>) {
+		clazz.def_readwrite("id", &S::ID);
+	}
+	for (int i = 0; fields[i] != NULL; i++) {
+		fields[i]->AddPythonField(clazz);
+	}
+}
+#endif
 
 } //namespace lcf
 

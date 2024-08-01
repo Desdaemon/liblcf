@@ -14,6 +14,7 @@ option(LIBLCF_UPDATE_MIMEDB "Whether to run update-mime-database after install (
 option(LIBLCF_ENABLE_TOOLS "Whether to build the tools (default: ON)" ${LIBLCF_MAIN_PROJECT})
 option(LIBLCF_ENABLE_TESTS "Whether to build the unit tests (default: ON)" ${LIBLCF_MAIN_PROJECT})
 option(LIBLCF_ENABLE_BENCHMARKS "Whether to build the benchmarks (default: OFF)" OFF)
+option(LIBLCF_WITH_PYLIB "Build Python wrapper (default: OFF)" OFF)
 option(LIBLCF_ENABLE_INSTALL "Whether to add an install target (default: ON)" ${LIBLCF_MAIN_PROJECT})
 set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "Override CMAKE_DEBUG_POSTFIX.")
 
@@ -292,6 +293,10 @@ set(LCF_HEADERS
 	src/lcf/third_party/string_view.h
 )
 
+if(LIBLCF_WITH_PYLIB)
+	list(APPEND LCF_HEADERS src/pycast.h)
+endif()
+
 add_library(lcf ${LCF_SOURCES} ${LCF_HEADERS})
 
 # IDE source grouping
@@ -501,6 +506,21 @@ if(LIBLCF_ENABLE_TOOLS)
 			install(TARGETS ${tool} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 		endif()
 	endforeach()
+endif()
+
+# Python wrapper
+if(LIBLCF_WITH_PYLIB)
+	find_package(Python 3.8 COMPONENTS Development Interpreter REQUIRED)
+	find_package(pybind11 CONFIG REQUIRED)
+
+	target_compile_options(lcf PRIVATE "-fPIC")
+	target_link_libraries(lcf pybind11::module)
+	target_compile_definitions(lcf PUBLIC WITH_PYLIB=1)
+
+	pybind11_add_module(pylcf tools/python/index.cpp src/pycast.h)
+	add_dependencies(pylcf lcf)
+	target_link_libraries(pylcf PRIVATE lcf)
+	install(TARGETS pylcf DESTINATION .)
 endif()
 
 # Doxygen documentation

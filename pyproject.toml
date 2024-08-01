@@ -1,0 +1,23 @@
+[build-system]
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pylcf"
+version = "0.1.0"
+
+[tools.scikit-build]
+wheel.packages = []
+cmake.build-type = "Release"
+build-dir = "build"
+
+[tool.scikit-build.cmake.define]
+LIBLCF_WITH_PYLIB = "ON"
+LIBLCF_ENABLE_INSTALL = "OFF"
+BUILD_SHARED_LIBS = "OFF"
+LIBLCF_ENABLE_TOOLS = "OFF"
+LIBLCF_ENABLE_TESTS = "OFF"
+
+[[tool.scikit-build.overrides]]
+if.platform-machine = "AMD64"
+build-dir = "build/windows-x64-vs2022-release"

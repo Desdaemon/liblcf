@@ -1,0 +1,1434 @@
+"""
+
+Thin Python wrapper around liblcf.
+
+Encoding
+========
+pylcf takes a similar approach to the EasyRPG Player on how to automatically
+determine the suitable encoding for strings. By reading the database file first
+before any other file, conventionally named RPG_RT.ldb, pylcf will try to
+guess the encoding and reuse it for later reads.
+
+If the encoding of a game is known ahead of time, it is advisable to set the
+encoding with :ref:`pylcf.encoding` before reading. For Japanese games, general
+usage will usually only require the "shift_jis" encoding. One can also set the
+encoding to "auto" so that the next read of a database will guess the
+encoding again.
+"""
+from __future__ import annotations
+import typing
+__all__ = ['Actor', 'Animation', 'AnimationCellData', 'AnimationFrame', 'AnimationTiming', 'Attribute', 'BattleCommand', 'BattleCommands', 'BattlerAnimation', 'BattlerAnimationItemSkill', 'BattlerAnimationPose', 'BattlerAnimationWeapon', 'Chipset', 'Class', 'CommonEvent', 'Database', 'Encounter', 'Enemy', 'EnemyAction', 'Equipment', 'Event', 'EventCommand', 'EventPage', 'EventPageCondition', 'EventPageConditionFlags', 'Item', 'Learning', 'Map', 'MapInfo', 'MoveCommand', 'MoveRoute', 'Music', 'Parameters', 'Rect', 'Save', 'SaveActor', 'SaveCommonEvent', 'SaveEasyRpgData', 'SaveEasyRpgText', 'SaveEasyRpgWindow', 'SaveEventExecFrame', 'SaveEventExecState', 'SaveInventory', 'SaveMapEvent', 'SaveMapInfo', 'SavePanorama', 'SavePartyLocation', 'SavePicture', 'SaveScreen', 'SaveSystem', 'SaveTarget', 'SaveTitle', 'SaveVehicleLocation', 'Skill', 'Sound', 'Start', 'State', 'Switch', 'System', 'Terms', 'Terrain', 'TreeMap', 'Troop', 'TroopMember', 'TroopPage', 'TroopPageCondition', 'Variable', 'encoding', 'read_lcf', 'read_ldb', 'read_lmt', 'read_lmu']
+class Actor:
+    attribute_ranks: list[int]
+    auto_battle: bool
+    battle_commands: list[int]
+    battle_x: int
+    battle_y: int
+    battler_animation: int
+    character_index: int
+    character_name: str
+    class_id: int
+    critical_hit: bool
+    critical_hit_chance: int
+    easyrpg_actorai: int
+    easyrpg_attack_all: bool
+    easyrpg_dual_attack: bool
+    easyrpg_ignore_evasion: bool
+    easyrpg_immune_to_attribute_downshifts: bool
+    easyrpg_prevent_critical: bool
+    easyrpg_raise_evasion: bool
+    easyrpg_unarmed_attribute_set: list[bool]
+    easyrpg_unarmed_hit: int
+    easyrpg_unarmed_state_chance: int
+    easyrpg_unarmed_state_set: list[bool]
+    exp_base: int
+    exp_correction: int
+    exp_inflation: int
+    face_index: int
+    face_name: str
+    final_level: int
+    id: int
+    initial_equipment: Equipment
+    initial_level: int
+    lock_equipment: bool
+    name: str
+    parameters: Parameters
+    rename_skill: bool
+    skill_name: str
+    skills: list[Learning]
+    state_ranks: list[int]
+    super_guard: bool
+    title: str
+    transparent: bool
+    two_weapon: bool
+    unarmed_animation: int
+    def __repr__(self) -> str:
+        ...
+class Animation:
+    animation_name: str
+    frames: list[AnimationFrame]
+    id: int
+    large: bool
+    name: str
+    position: int
+    scope: int
+    timings: list[AnimationTiming]
+    def __repr__(self) -> str:
+        ...
+class AnimationCellData:
+    cell_id: int
+    id: int
+    tone_blue: int
+    tone_gray: int
+    tone_green: int
+    tone_red: int
+    transparency: int
+    valid: int
+    x: int
+    y: int
+    zoom: int
+class AnimationFrame:
+    cells: list[AnimationCellData]
+    id: int
+class AnimationTiming:
+    flash_blue: int
+    flash_green: int
+    flash_power: int
+    flash_red: int
+    flash_scope: int
+    frame: int
+    id: int
+    screen_shake: int
+    se: Sound
+class Attribute:
+    a_rate: int
+    b_rate: int
+    c_rate: int
+    d_rate: int
+    e_rate: int
+    id: int
+    name: str
+    type: int
+    def __repr__(self) -> str:
+        ...
+class BattleCommand:
+    id: int
+    name: str
+    type: int
+    def __repr__(self) -> str:
+        ...
+class BattleCommands:
+    battle_type: int
+    commands: list[BattleCommand]
+    death_event: int
+    death_handler: bool
+    death_handler_unused: bool
+    death_teleport: bool
+    death_teleport_face: int
+    death_teleport_id: int
+    death_teleport_x: int
+    death_teleport_y: int
+    easyrpg_default_atb_mode: int
+    easyrpg_disable_row_feature: bool
+    easyrpg_enable_battle_row_command: bool
+    easyrpg_fixed_actor_facing_direction: int
+    easyrpg_fixed_enemy_facing_direction: int
+    easyrpg_sequential_order: bool
+    placement: int
+    row: int
+    transparency: int
+    unused_display_normal_parameters: bool
+    window_size: int
+class BattlerAnimation:
+    id: int
+    name: str
+    poses: list[BattlerAnimationPose]
+    speed: int
+    weapons: list[BattlerAnimationWeapon]
+    def __repr__(self) -> str:
+        ...
+class BattlerAnimationItemSkill:
+    after_image: int
+    attacks: int
+    battle_animation_id: int
+    id: int
+    movement: int
+    pose: int
+    ranged: bool
+    ranged_animation_id: int
+    ranged_speed: int
+    type: int
+    unknown02: int
+    weapon_animation_id: int
+class BattlerAnimationPose:
+    animation_type: int
+    battle_animation_id: int
+    battler_index: int
+    battler_name: str
+    id: int
+    name: str
+    def __repr__(self) -> str:
+        ...
+class BattlerAnimationWeapon:
+    id: int
+    name: str
+    weapon_index: int
+    weapon_name: str
+    def __repr__(self) -> str:
+        ...
+class Chipset:
+    animation_speed: int
+    animation_type: int
+    chipset_name: str
+    id: int
+    name: str
+    passable_data_lower: list[int]
+    passable_data_upper: list[int]
+    terrain_data: list[int]
+    def __repr__(self) -> str:
+        ...
+class Class:
+    attribute_ranks: list[int]
+    auto_battle: bool
+    battle_commands: list[int]
+    battler_animation: int
+    exp_base: int
+    exp_correction: int
+    exp_inflation: int
+    id: int
+    lock_equipment: bool
+    name: str
+    parameters: Parameters
+    skills: list[Learning]
+    state_ranks: list[int]
+    super_guard: bool
+    two_weapon: bool
+    def __repr__(self) -> str:
+        ...
+class CommonEvent:
+    event_commands: list[EventCommand]
+    id: int
+    name: str
+    switch_flag: bool
+    switch_id: int
+    trigger: int
+    def __repr__(self) -> str:
+        ...
+class Database:
+    actors: list[Actor]
+    animations: list[Animation]
+    attributes: list[Attribute]
+    battlecommands: BattleCommands
+    battleranimations: list[BattlerAnimation]
+    chipsets: list[Chipset]
+    classes: list[Class]
+    commonevents: list[CommonEvent]
+    enemies: list[Enemy]
+    items: list[Item]
+    skills: list[Skill]
+    states: list[State]
+    switches: list[Switch]
+    system: System
+    terms: Terms
+    terrains: list[Terrain]
+    troops: list[Troop]
+    variables: list[Variable]
+    version: int
+class Encounter:
+    id: int
+    troop_id: int
+class Enemy:
+    actions: list[EnemyAction]
+    agility: int
+    attack: int
+    attribute_ranks: list[int]
+    battler_hue: int
+    battler_name: str
+    critical_hit: bool
+    critical_hit_chance: int
+    defense: int
+    drop_id: int
+    drop_prob: int
+    easyrpg_attack_all: bool
+    easyrpg_attribute_set: list[bool]
+    easyrpg_enemyai: int
+    easyrpg_hit: int
+    easyrpg_ignore_evasion: bool
+    easyrpg_immune_to_attribute_downshifts: bool
+    easyrpg_prevent_critical: bool
+    easyrpg_raise_evasion: bool
+    easyrpg_state_chance: int
+    easyrpg_state_set: list[bool]
+    easyrpg_super_guard: bool
+    exp: int
+    gold: int
+    id: int
+    levitate: bool
+    maniac_unarmed_animation: int
+    max_hp: int
+    max_sp: int
+    miss: bool
+    name: str
+    spirit: int
+    state_ranks: list[int]
+    transparent: bool
+    def __repr__(self) -> str:
+        ...
+class EnemyAction:
+    basic: int
+    condition_param1: int
+    condition_param2: int
+    condition_type: int
+    enemy_id: int
+    id: int
+    kind: int
+    rating: int
+    skill_id: int
+    switch_id: int
+    switch_off: bool
+    switch_off_id: int
+    switch_on: bool
+    switch_on_id: int
+class Equipment:
+    accessory_id: int
+    armor_id: int
+    helmet_id: int
+    shield_id: int
+    weapon_id: int
+class Event:
+    id: int
+    name: str
+    pages: list[EventPage]
+    x: int
+    y: int
+    def __repr__(self) -> str:
+        ...
+class EventCommand:
+    """
+    A mapping between command codes and tags is available on ``EventCommand.tag``.
+    """
+    tag: typing.ClassVar[dict] = {'END': 10, 10: 'END', 'CallCommonEvent': 1005, 1005: 'CallCommonEvent', 'ForceFlee': 1006, 1006: 'ForceFlee', 'EnableCombo': 1007, 1007: 'EnableCombo', 'ChangeClass': 1008, 1008: 'ChangeClass', 'ChangeBattleCommands': 1009, 1009: 'ChangeBattleCommands', 'OpenLoadMenu': 5001, 5001: 'OpenLoadMenu', 'ExitGame': 5002, 5002: 'ExitGame', 'ToggleAtbMode': 5003, 5003: 'ToggleAtbMode', 'ToggleFullscreen': 5004, 5004: 'ToggleFullscreen', 'OpenVideoOptions': 5005, 5005: 'OpenVideoOptions', 'ShowMessage': 10110, 10110: 'ShowMessage', 'MessageOptions': 10120, 10120: 'MessageOptions', 'ChangeFaceGraphic': 10130, 10130: 'ChangeFaceGraphic', 'ShowChoice': 10140, 10140: 'ShowChoice', 'InputNumber': 10150, 10150: 'InputNumber', 'ControlSwitches': 10210, 10210: 'ControlSwitches', 'ControlVars': 10220, 10220: 'ControlVars', 'TimerOperation': 10230, 10230: 'TimerOperation', 'ChangeGold': 10310, 10310: 'ChangeGold', 'ChangeItems': 10320, 10320: 'ChangeItems', 'ChangePartyMembers': 10330, 10330: 'ChangePartyMembers', 'ChangeExp': 10410, 10410: 'ChangeExp', 'ChangeLevel': 10420, 10420: 'ChangeLevel', 'ChangeParameters': 10430, 10430: 'ChangeParameters', 'ChangeSkills': 10440, 10440: 'ChangeSkills', 'ChangeEquipment': 10450, 10450: 'ChangeEquipment', 'ChangeHP': 10460, 10460: 'ChangeHP', 'ChangeSP': 10470, 10470: 'ChangeSP', 'ChangeCondition': 10480, 10480: 'ChangeCondition', 'FullHeal': 10490, 10490: 'FullHeal', 'SimulatedAttack': 10500, 10500: 'SimulatedAttack', 'ChangeHeroName': 10610, 10610: 'ChangeHeroName', 'ChangeHeroTitle': 10620, 10620: 'ChangeHeroTitle', 'ChangeSpriteAssociation': 10630, 10630: 'ChangeSpriteAssociation', 'ChangeActorFace': 10640, 10640: 'ChangeActorFace', 'ChangeVehicleGraphic': 10650, 10650: 'ChangeVehicleGraphic', 'ChangeSystemBGM': 10660, 10660: 'ChangeSystemBGM', 'ChangeSystemSFX': 10670, 10670: 'ChangeSystemSFX', 'ChangeSystemGraphics': 10680, 10680: 'ChangeSystemGraphics', 'ChangeScreenTransitions': 10690, 10690: 'ChangeScreenTransitions', 'EnemyEncounter': 10710, 10710: 'EnemyEncounter', 'OpenShop': 10720, 10720: 'OpenShop', 'ShowInn': 10730, 10730: 'ShowInn', 'EnterHeroName': 10740, 10740: 'EnterHeroName', 'Teleport': 10810, 10810: 'Teleport', 'MemorizeLocation': 10820, 10820: 'MemorizeLocation', 'RecallToLocation': 10830, 10830: 'RecallToLocation', 'EnterExitVehicle': 10840, 10840: 'EnterExitVehicle', 'SetVehicleLocation': 10850, 10850: 'SetVehicleLocation', 'ChangeEventLocation': 10860, 10860: 'ChangeEventLocation', 'TradeEventLocations': 10870, 10870: 'TradeEventLocations', 'StoreTerrainID': 10910, 10910: 'StoreTerrainID', 'StoreEventID': 10920, 10920: 'StoreEventID', 'EraseScreen': 11010, 11010: 'EraseScreen', 'ShowScreen': 11020, 11020: 'ShowScreen', 'TintScreen': 11030, 11030: 'TintScreen', 'FlashScreen': 11040, 11040: 'FlashScreen', 'ShakeScreen': 11050, 11050: 'ShakeScreen', 'PanScreen': 11060, 11060: 'PanScreen', 'WeatherEffects': 11070, 11070: 'WeatherEffects', 'ShowPicture': 11110, 11110: 'ShowPicture', 'MovePicture': 11120, 11120: 'MovePicture', 'ErasePicture': 11130, 11130: 'ErasePicture', 'ShowBattleAnimation': 11210, 11210: 'ShowBattleAnimation', 'PlayerVisibility': 11310, 11310: 'PlayerVisibility', 'FlashSprite': 11320, 11320: 'FlashSprite', 'MoveEvent': 11330, 11330: 'MoveEvent', 'ProceedWithMovement': 11340, 11340: 'ProceedWithMovement', 'HaltAllMovement': 11350, 11350: 'HaltAllMovement', 'Wait': 11410, 11410: 'Wait', 'PlayBGM': 11510, 11510: 'PlayBGM', 'FadeOutBGM': 11520, 11520: 'FadeOutBGM', 'MemorizeBGM': 11530, 11530: 'MemorizeBGM', 'PlayMemorizedBGM': 11540, 11540: 'PlayMemorizedBGM', 'PlaySound': 11550, 11550: 'PlaySound', 'PlayMovie': 11560, 11560: 'PlayMovie', 'KeyInputProc': 11610, 11610: 'KeyInputProc', 'ChangeMapTileset': 11710, 11710: 'ChangeMapTileset', 'ChangePBG': 11720, 11720: 'ChangePBG', 'ChangeEncounterSteps': 11740, 11740: 'ChangeEncounterSteps', 'TileSubstitution': 11750, 11750: 'TileSubstitution', 'TeleportTargets': 11810, 11810: 'TeleportTargets', 'ChangeTeleportAccess': 11820, 11820: 'ChangeTeleportAccess', 'EscapeTarget': 11830, 11830: 'EscapeTarget', 'ChangeEscapeAccess': 11840, 11840: 'ChangeEscapeAccess', 'OpenSaveMenu': 11910, 11910: 'OpenSaveMenu', 'ChangeSaveAccess': 11930, 11930: 'ChangeSaveAccess', 'OpenMainMenu': 11950, 11950: 'OpenMainMenu', 'ChangeMainMenuAccess': 11960, 11960: 'ChangeMainMenuAccess', 'ConditionalBranch': 12010, 12010: 'ConditionalBranch', 'Label': 12110, 12110: 'Label', 'JumpToLabel': 12120, 12120: 'JumpToLabel', 'Loop': 12210, 12210: 'Loop', 'BreakLoop': 12220, 12220: 'BreakLoop', 'EndEventProcessing': 12310, 12310: 'EndEventProcessing', 'EraseEvent': 12320, 12320: 'EraseEvent', 'CallEvent': 12330, 12330: 'CallEvent', 'Comment': 12410, 12410: 'Comment', 'GameOver': 12420, 12420: 'GameOver', 'ReturntoTitleScreen': 12510, 12510: 'ReturntoTitleScreen', 'ChangeMonsterHP': 13110, 13110: 'ChangeMonsterHP', 'ChangeMonsterMP': 13120, 13120: 'ChangeMonsterMP', 'ChangeMonsterCondition': 13130, 13130: 'ChangeMonsterCondition', 'ShowHiddenMonster': 13150, 13150: 'ShowHiddenMonster', 'ChangeBattleBG': 13210, 13210: 'ChangeBattleBG', 'ShowBattleAnimation_B': 13260, 13260: 'ShowBattleAnimation_B', 'ConditionalBranch_B': 13310, 13310: 'ConditionalBranch_B', 'TerminateBattle': 13410, 13410: 'TerminateBattle', 'ShowMessage_2': 20110, 20110: 'ShowMessage_2', 'ShowChoiceOption': 20140, 20140: 'ShowChoiceOption', 'ShowChoiceEnd': 20141, 20141: 'ShowChoiceEnd', 'VictoryHandler': 20710, 20710: 'VictoryHandler', 'EscapeHandler': 20711, 20711: 'EscapeHandler', 'DefeatHandler': 20712, 20712: 'DefeatHandler', 'EndBattle': 20713, 20713: 'EndBattle', 'Transaction': 20720, 20720: 'Transaction', 'NoTransaction': 20721, 20721: 'NoTransaction', 'EndShop': 20722, 20722: 'EndShop', 'Stay': 20730, 20730: 'Stay', 'NoStay': 20731, 20731: 'NoStay', 'EndInn': 20732, 20732: 'EndInn', 'ElseBranch': 22010, 22010: 'ElseBranch', 'EndBranch': 22011, 22011: 'EndBranch', 'EndLoop': 22210, 22210: 'EndLoop', 'Comment_2': 22410, 22410: 'Comment_2', 'ElseBranch_B': 23310, 23310: 'ElseBranch_B', 'EndBranch_B': 23311, 23311: 'EndBranch_B', 'Maniac_GetSaveInfo': 3001, 3001: 'Maniac_GetSaveInfo', 'Maniac_Save': 3002, 3002: 'Maniac_Save', 'Maniac_Load': 3003, 3003: 'Maniac_Load', 'Maniac_EndLoadProcess': 3004, 3004: 'Maniac_EndLoadProcess', 'Maniac_GetMousePosition': 3005, 3005: 'Maniac_GetMousePosition', 'Maniac_SetMousePosition': 3006, 3006: 'Maniac_SetMousePosition', 'Maniac_ShowStringPicture': 3007, 3007: 'Maniac_ShowStringPicture', 'Maniac_GetPictureInfo': 3008, 3008: 'Maniac_GetPictureInfo', 'Maniac_ControlBattle': 3009, 3009: 'Maniac_ControlBattle', 'Maniac_ControlAtbGauge': 3010, 3010: 'Maniac_ControlAtbGauge', 'Maniac_ChangeBattleCommandEx': 3011, 3011: 'Maniac_ChangeBattleCommandEx', 'Maniac_GetBattleInfo': 3012, 3012: 'Maniac_GetBattleInfo', 'Maniac_ControlVarArray': 3013, 3013: 'Maniac_ControlVarArray', 'Maniac_KeyInputProcEx': 3014, 3014: 'Maniac_KeyInputProcEx', 'Maniac_RewriteMap': 3015, 3015: 'Maniac_RewriteMap', 'Maniac_ControlGlobalSave': 3016, 3016: 'Maniac_ControlGlobalSave', 'Maniac_ChangePictureId': 3017, 3017: 'Maniac_ChangePictureId', 'Maniac_SetGameOption': 3018, 3018: 'Maniac_SetGameOption', 'Maniac_CallCommand': 3019, 3019: 'Maniac_CallCommand', 'Maniac_ControlStrings': 3020, 3020: 'Maniac_ControlStrings', 'Maniac_GetGameInfo': 3021, 3021: 'Maniac_GetGameInfo', 'Maniac_EditPicture': 3025, 3025: 'Maniac_EditPicture', 'Maniac_WritePicture': 3026, 3026: 'Maniac_WritePicture', 'Maniac_AddMoveRoute': 3027, 3027: 'Maniac_AddMoveRoute', 'Maniac_EditTile': 3028, 3028: 'Maniac_EditTile', 'Maniac_ControlTextProcessing': 3029, 3029: 'Maniac_ControlTextProcessing'}
+    indent: int
+    parameters: list[int]
+    def __repr__(self) -> str:
+        ...
+    @property
+    def code(self) -> int:
+        """
+        An integer code representing the command. A description of the command
+        can be acquired with ``EventCommand.tag[code]``.
+        """
+    @code.setter
+    def code(self, arg0: int) -> None:
+        ...
+    @property
+    def string(self) -> str:
+        """
+        The string component of this command, for example the description of a
+        Comment, the file path for Picture commands etc.
+        """
+    @string.setter
+    def string(self, arg0: str) -> None:
+        ...
+class EventPage:
+    animation_type: int
+    character_direction: int
+    character_index: int
+    character_name: str
+    character_pattern: int
+    condition: EventPageCondition
+    event_commands: list[EventCommand]
+    id: int
+    layer: int
+    move_frequency: int
+    move_route: MoveRoute
+    move_speed: int
+    move_type: int
+    overlap_forbidden: bool
+    translucent: bool
+    trigger: int
+class EventPageCondition:
+    actor_id: int
+    compare_operator: int
+    flags: EventPageConditionFlags
+    item_id: int
+    switch_a_id: int
+    switch_b_id: int
+    timer2_sec: int
+    timer_sec: int
+    variable_id: int
+    variable_value: int
+class EventPageConditionFlags:
+    actor: bool
+    item: bool
+    switch_a: bool
+    switch_b: bool
+    timer: bool
+    timer2: bool
+    variable: bool
+    def __repr__(self) -> str:
+        ...
+class Item:
+    actor_set: list[bool]
+    agi_points1: int
+    agi_points2: int
+    animation_data: list[BattlerAnimationItemSkill]
+    animation_id: int
+    atk_points1: int
+    atk_points2: int
+    attack_all: bool
+    attribute_set: list[bool]
+    class_set: list[bool]
+    critical_hit: int
+    cursed: bool
+    def_points1: int
+    def_points2: int
+    description: str
+    dual_attack: bool
+    easyrpg_max_count: int
+    easyrpg_using_message: str
+    entire_party: bool
+    half_sp_cost: bool
+    hit: int
+    id: int
+    ignore_evasion: bool
+    ko_only: bool
+    max_hp_points: int
+    max_sp_points: int
+    name: str
+    no_terrain_damage: bool
+    occasion_battle: bool
+    occasion_field1: bool
+    occasion_field2: bool
+    preemptive: bool
+    prevent_critical: bool
+    price: int
+    raise_evasion: bool
+    ranged_target: int
+    ranged_trajectory: int
+    recover_hp: int
+    recover_hp_rate: int
+    recover_sp: int
+    recover_sp_rate: int
+    reverse_state_effect: bool
+    skill_id: int
+    sp_cost: int
+    spi_points1: int
+    spi_points2: int
+    state_chance: int
+    state_set: list[bool]
+    switch_id: int
+    two_handed: bool
+    type: int
+    use_skill: bool
+    uses: int
+    using_message: int
+    weapon_animation: int
+    def __repr__(self) -> str:
+        ...
+class Learning:
+    id: int
+    level: int
+    skill_id: int
+class Map:
+    chipset_id: int
+    events: list[Event]
+    generator_extra_b: bool
+    generator_extra_c: bool
+    generator_flag: bool
+    generator_floor_b: bool
+    generator_floor_c: bool
+    generator_height: int
+    generator_mode: int
+    generator_surround: bool
+    generator_tile_ids: list[int]
+    generator_tiles: int
+    generator_upper_wall: bool
+    generator_width: int
+    generator_x: list[int]
+    generator_y: list[int]
+    height: int
+    lower_layer: list[int]
+    parallax_auto_loop_x: bool
+    parallax_auto_loop_y: bool
+    parallax_flag: bool
+    parallax_loop_x: bool
+    parallax_loop_y: bool
+    parallax_name: str
+    parallax_sx: int
+    parallax_sy: int
+    save_count: int
+    save_count_2k3e: int
+    scroll_type: int
+    top_level: bool
+    upper_layer: list[int]
+    width: int
+class MapInfo:
+    area_rect: Rect
+    background_name: str
+    background_type: int
+    encounter_steps: int
+    encounters: list[Encounter]
+    escape: int
+    expanded_node: bool
+    id: int
+    indentation: int
+    music: Music
+    music_type: int
+    name: str
+    parent_map: int
+    save: int
+    scrollbar_x: int
+    scrollbar_y: int
+    teleport: int
+    type: int
+    def __repr__(self) -> str:
+        ...
+class MoveCommand:
+    command_id: int
+    parameter_a: int
+    parameter_b: int
+    parameter_c: int
+    parameter_string: str
+class MoveRoute:
+    move_commands: list[MoveCommand]
+    repeat: bool
+    skippable: bool
+class Music:
+    balance: int
+    fadein: int
+    name: str
+    tempo: int
+    volume: int
+    def __repr__(self) -> str:
+        ...
+class Parameters:
+    agility: list[int]
+    attack: list[int]
+    defense: list[int]
+    maxhp: list[int]
+    maxsp: list[int]
+    spirit: list[int]
+class Rect:
+    b: int
+    l: int
+    r: int
+    t: int
+class Save:
+    actors: list[SaveActor]
+    airship_location: SaveVehicleLocation
+    boat_location: SaveVehicleLocation
+    common_events: list[SaveCommonEvent]
+    easyrpg_data: SaveEasyRpgData
+    foreground_event_execstate: SaveEventExecState
+    inventory: SaveInventory
+    map_info: SaveMapInfo
+    panorama: SavePanorama
+    party_location: SavePartyLocation
+    pictures: list[SavePicture]
+    screen: SaveScreen
+    ship_location: SaveVehicleLocation
+    system: SaveSystem
+    targets: list[SaveTarget]
+    title: SaveTitle
+class SaveActor:
+    agility_mod: int
+    attack_mod: int
+    auto_battle: bool
+    battle_commands: list[int]
+    battler_animation: int
+    changed_battle_commands: bool
+    class_id: int
+    current_hp: int
+    current_sp: int
+    defense_mod: int
+    equipped: list[int]
+    exp: int
+    face_id: int
+    face_name: str
+    hp_mod: int
+    id: int
+    level: int
+    lock_equipment: bool
+    name: str
+    row: int
+    skills: list[int]
+    sp_mod: int
+    spirit_mod: int
+    sprite_id: int
+    sprite_name: str
+    status: list[int]
+    super_guard: bool
+    title: str
+    transparency: int
+    two_weapon: bool
+    def __repr__(self) -> str:
+        ...
+class SaveCommonEvent:
+    id: int
+    parallel_event_execstate: SaveEventExecState
+class SaveEasyRpgData:
+    codepage: int
+    version: int
+    windows: list[SaveEasyRpgWindow]
+class SaveEasyRpgText:
+    flags: ...
+    font_name: str
+    font_size: int
+    letter_spacing: int
+    line_spacing: int
+    position_x: int
+    position_y: int
+    text: str
+class SaveEasyRpgWindow:
+    flags: ...
+    height: int
+    id: int
+    message_stretch: int
+    system_name: str
+    texts: list[SaveEasyRpgText]
+    width: int
+class SaveEventExecFrame:
+    commands: list[EventCommand]
+    current_command: int
+    event_id: int
+    id: int
+    maniac_event_id: int
+    maniac_event_info: int
+    maniac_event_page_id: int
+    maniac_loop_info: list[int]
+    maniac_loop_info_size: int
+    subcommand_path: list[int]
+    triggered_by_decision_key: bool
+class SaveEventExecState:
+    abort_on_escape: bool
+    keyinput_2k3down: int
+    keyinput_2k3left: int
+    keyinput_2k3right: int
+    keyinput_2k3up: int
+    keyinput_2kdown_2k3operators: int
+    keyinput_2kleft_2k3shift: int
+    keyinput_2kright: int
+    keyinput_2kshift_2k3numbers: int
+    keyinput_2kup: int
+    keyinput_all_directions: bool
+    keyinput_cancel: int
+    keyinput_decision: int
+    keyinput_time_variable: int
+    keyinput_timed: bool
+    keyinput_variable: int
+    keyinput_wait: bool
+    show_message: bool
+    stack: list[SaveEventExecFrame]
+    wait_key_enter: bool
+    wait_movement: bool
+    wait_time: int
+class SaveInventory:
+    battles: int
+    defeats: int
+    escapes: int
+    gold: int
+    item_counts: list[int]
+    item_ids: list[int]
+    item_usage: list[int]
+    party: list[int]
+    steps: int
+    timer1_active: bool
+    timer1_battle: bool
+    timer1_frames: int
+    timer1_visible: bool
+    timer2_active: bool
+    timer2_battle: bool
+    timer2_frames: int
+    timer2_visible: bool
+    turns: int
+    victories: int
+class SaveMapEvent:
+    active: bool
+    anim_count: int
+    anim_frame: int
+    anim_paused: int
+    animation_type: int
+    begin_jump_x: int
+    begin_jump_y: int
+    direction: int
+    facing: int
+    flash_blue: int
+    flash_current_level: float
+    flash_green: int
+    flash_red: int
+    flash_time_left: int
+    flying: bool
+    id: int
+    jumping: bool
+    layer: int
+    lock_facing: bool
+    map_id: int
+    max_stop_count: int
+    move_frequency: int
+    move_route: MoveRoute
+    move_route_finished: bool
+    move_route_index: int
+    move_route_overwrite: bool
+    move_route_through: bool
+    move_speed: int
+    original_move_route_index: int
+    overlap_forbidden: bool
+    parallel_event_execstate: SaveEventExecState
+    pause: bool
+    position_x: int
+    position_y: int
+    processed: bool
+    remaining_step: int
+    sprite_hidden: bool
+    sprite_id: int
+    sprite_name: str
+    stop_count: int
+    through: bool
+    transparency: int
+    triggered_by_decision_key: bool
+    waiting_execution: bool
+class SaveMapInfo:
+    chipset_id: int
+    encounter_steps: int
+    events: list[SaveMapEvent]
+    lower_tiles: list[int]
+    parallax_horz: bool
+    parallax_horz_auto: bool
+    parallax_horz_speed: int
+    parallax_name: str
+    parallax_vert: bool
+    parallax_vert_auto: bool
+    parallax_vert_speed: int
+    position_x: int
+    position_y: int
+    upper_tiles: list[int]
+class SavePanorama:
+    pan_x: int
+    pan_y: int
+class SavePartyLocation:
+    aboard: bool
+    active: bool
+    anim_count: int
+    anim_frame: int
+    anim_paused: int
+    animation_type: int
+    begin_jump_x: int
+    begin_jump_y: int
+    boarding: bool
+    database_save_count: int
+    direction: int
+    encounter_calling: bool
+    facing: int
+    flash_blue: int
+    flash_current_level: float
+    flash_green: int
+    flash_red: int
+    flash_time_left: int
+    flying: bool
+    jumping: bool
+    layer: int
+    lock_facing: bool
+    map_id: int
+    map_save_count: int
+    max_stop_count: int
+    menu_calling: bool
+    move_frequency: int
+    move_route: MoveRoute
+    move_route_finished: bool
+    move_route_index: int
+    move_route_overwrite: bool
+    move_route_through: bool
+    move_speed: int
+    overlap_forbidden: bool
+    pan_current_x: int
+    pan_current_y: int
+    pan_finish_x: int
+    pan_finish_y: int
+    pan_speed: int
+    pan_state: int
+    pause: bool
+    position_x: int
+    position_y: int
+    preboard_move_speed: int
+    processed: bool
+    remaining_step: int
+    sprite_hidden: bool
+    sprite_id: int
+    sprite_name: str
+    stop_count: int
+    through: bool
+    total_encounter_rate: int
+    transparency: int
+    unboarding: bool
+    vehicle: int
+class SavePicture:
+    battle_layer: int
+    current_blue: float
+    current_bot_trans: float
+    current_effect_power: float
+    current_green: float
+    current_magnify: float
+    current_red: float
+    current_rotation: float
+    current_sat: float
+    current_top_trans: float
+    current_waver: int
+    current_x: float
+    current_y: float
+    easyrpg_blend_mode: int
+    easyrpg_flip: int
+    easyrpg_type: int
+    effect_mode: int
+    finish_blue: int
+    finish_bot_trans: int
+    finish_effect_power: int
+    finish_green: int
+    finish_magnify: int
+    finish_red: int
+    finish_sat: int
+    finish_top_trans: int
+    finish_x: float
+    finish_y: float
+    fixed_to_map: bool
+    flags: ...
+    frames: int
+    id: int
+    maniac_current_magnify_height: float
+    maniac_finish_magnify_height: int
+    map_layer: int
+    name: str
+    spritesheet_cols: int
+    spritesheet_frame: int
+    spritesheet_play_once: bool
+    spritesheet_rows: int
+    spritesheet_speed: int
+    start_x: float
+    start_y: float
+    time_left: int
+    use_transparent_color: bool
+    def __repr__(self) -> str:
+        ...
+class SaveScreen:
+    battleanim_active: bool
+    battleanim_frame: int
+    battleanim_global: bool
+    battleanim_id: int
+    battleanim_target: int
+    flash_blue: int
+    flash_continuous: bool
+    flash_current_level: float
+    flash_green: int
+    flash_red: int
+    flash_time_left: int
+    pan_x: int
+    pan_y: int
+    shake_continuous: bool
+    shake_position: int
+    shake_position_y: int
+    shake_speed: int
+    shake_strength: int
+    shake_time_left: int
+    tint_current_blue: float
+    tint_current_green: float
+    tint_current_red: float
+    tint_current_sat: float
+    tint_finish_blue: int
+    tint_finish_green: int
+    tint_finish_red: int
+    tint_finish_sat: int
+    tint_time_left: int
+    weather: int
+    weather_strength: int
+class SaveSystem:
+    actor_damaged_se: Sound
+    airship_music: Music
+    atb_mode: int
+    background: str
+    battle_end_fadein: int
+    battle_end_fadeout: int
+    battle_end_music: Music
+    battle_music: Music
+    battle_se: Sound
+    battle_start_fadein: int
+    battle_start_fadeout: int
+    before_battle_music: Music
+    before_vehicle_music: Music
+    boat_music: Music
+    buzzer_se: Sound
+    cancel_se: Sound
+    current_music: Music
+    cursor_se: Sound
+    decision_se: Sound
+    dodge_se: Sound
+    enemy_attack_se: Sound
+    enemy_damaged_se: Sound
+    enemy_death_se: Sound
+    escape_allowed: bool
+    escape_se: Sound
+    event_message_active: bool
+    face_flip: bool
+    face_id: int
+    face_name: str
+    face_right: bool
+    font_id: int
+    frame_count: int
+    gameover_music: Music
+    graphics_name: str
+    inn_music: Music
+    item_se: Sound
+    maniac_frameskip: int
+    maniac_joypad_bindings: list[int]
+    maniac_options: list[int]
+    maniac_picture_limit: int
+    maniac_strings: list[str]
+    menu_allowed: bool
+    message_continue_events: int
+    message_position: int
+    message_prevent_overlap: int
+    message_stretch: int
+    message_transparent: int
+    music_stopping: bool
+    save_allowed: bool
+    save_count: int
+    save_slot: int
+    scene: int
+    ship_music: Music
+    stored_music: Music
+    switches: list[bool]
+    teleport_allowed: bool
+    title_music: Music
+    transition_in: int
+    transition_out: int
+    variables: list[int]
+class SaveTarget:
+    id: int
+    map_id: int
+    map_x: int
+    map_y: int
+    switch_id: int
+    switch_on: bool
+class SaveTitle:
+    face1_id: int
+    face1_name: str
+    face2_id: int
+    face2_name: str
+    face3_id: int
+    face3_name: str
+    face4_id: int
+    face4_name: str
+    hero_hp: int
+    hero_level: int
+    hero_name: str
+    timestamp: float
+class SaveVehicleLocation:
+    active: bool
+    anim_count: int
+    anim_frame: int
+    anim_paused: int
+    animation_type: int
+    begin_jump_x: int
+    begin_jump_y: int
+    direction: int
+    facing: int
+    flash_blue: int
+    flash_current_level: float
+    flash_green: int
+    flash_red: int
+    flash_time_left: int
+    flying: bool
+    jumping: bool
+    layer: int
+    lock_facing: bool
+    map_id: int
+    max_stop_count: int
+    move_frequency: int
+    move_route: MoveRoute
+    move_route_finished: bool
+    move_route_index: int
+    move_route_overwrite: bool
+    move_route_through: bool
+    move_speed: int
+    orig_sprite_id: int
+    orig_sprite_name: str
+    overlap_forbidden: bool
+    pause: bool
+    position_x: int
+    position_y: int
+    processed: bool
+    remaining_ascent: int
+    remaining_descent: int
+    remaining_step: int
+    sprite_hidden: bool
+    sprite_id: int
+    sprite_name: str
+    stop_count: int
+    through: bool
+    transparency: int
+    vehicle: int
+class Skill:
+    absorb_damage: bool
+    affect_agility: bool
+    affect_attack: bool
+    affect_attr_defence: bool
+    affect_defense: bool
+    affect_hp: bool
+    affect_sp: bool
+    affect_spirit: bool
+    animation_id: int
+    attribute_effects: list[bool]
+    battler_animation: int
+    battler_animation_data: list[BattlerAnimationItemSkill]
+    description: str
+    easyrpg_affected_by_evade_all_physical_attacks: bool
+    easyrpg_affected_by_row_modifiers: bool
+    easyrpg_attribute_hit: int
+    easyrpg_battle2k3_message: str
+    easyrpg_critical_hit_chance: int
+    easyrpg_enable_stat_absorbing: bool
+    easyrpg_hp_cost: int
+    easyrpg_hp_percent: int
+    easyrpg_hp_type: int
+    easyrpg_ignore_reflect: bool
+    easyrpg_ignore_restrict_magic: bool
+    easyrpg_ignore_restrict_skill: bool
+    easyrpg_state_hit: int
+    failure_message: int
+    hit: int
+    id: int
+    ignore_defense: bool
+    magical_rate: int
+    name: str
+    occasion_battle: bool
+    occasion_field: bool
+    physical_rate: int
+    power: int
+    reverse_state_effect: bool
+    scope: int
+    sound_effect: Sound
+    sp_cost: int
+    sp_percent: int
+    sp_type: int
+    state_effects: list[bool]
+    switch_id: int
+    type: int
+    using_message1: str
+    using_message2: str
+    variance: int
+    def __repr__(self) -> str:
+        ...
+class Sound:
+    balance: int
+    name: str
+    tempo: int
+    volume: int
+    def __repr__(self) -> str:
+        ...
+class Start:
+    airship_map_id: int
+    airship_x: int
+    airship_y: int
+    boat_map_id: int
+    boat_x: int
+    boat_y: int
+    party_map_id: int
+    party_x: int
+    party_y: int
+    ship_map_id: int
+    ship_x: int
+    ship_y: int
+class State:
+    a_rate: int
+    affect_agility: bool
+    affect_attack: bool
+    affect_defense: bool
+    affect_spirit: bool
+    affect_type: int
+    auto_release_prob: int
+    avoid_attacks: bool
+    b_rate: int
+    battler_animation_id: int
+    c_rate: int
+    color: int
+    cursed: bool
+    d_rate: int
+    e_rate: int
+    easyrpg_immune_states: list[bool]
+    hold_turn: int
+    hp_change_map_steps: int
+    hp_change_map_val: int
+    hp_change_max: int
+    hp_change_type: int
+    hp_change_val: int
+    id: int
+    message_actor: str
+    message_affected: str
+    message_already: str
+    message_enemy: str
+    message_recovery: str
+    name: str
+    priority: int
+    reduce_hit_ratio: int
+    reflect_magic: bool
+    release_by_damage: int
+    restrict_magic: bool
+    restrict_magic_level: int
+    restrict_skill: bool
+    restrict_skill_level: int
+    restriction: int
+    sp_change_map_steps: int
+    sp_change_map_val: int
+    sp_change_max: int
+    sp_change_type: int
+    sp_change_val: int
+    type: int
+    def __repr__(self) -> str:
+        ...
+class Switch:
+    id: int
+    name: str
+    def __repr__(self) -> str:
+        ...
+class System:
+    actor_damaged_se: Sound
+    airship_index: int
+    airship_music: Music
+    airship_name: str
+    battle_end_fadein: int
+    battle_end_fadeout: int
+    battle_end_music: Music
+    battle_music: Music
+    battle_se: Sound
+    battle_start_fadein: int
+    battle_start_fadeout: int
+    battletest_alt_terrain: int
+    battletest_background: str
+    battletest_condition: int
+    battletest_data: list[...]
+    battletest_formation: int
+    battletest_terrain: int
+    boat_index: int
+    boat_music: Music
+    boat_name: str
+    buzzer_se: Sound
+    cancel_se: Sound
+    cursor_se: Sound
+    decision_se: Sound
+    dodge_se: Sound
+    easyrpg_alternative_exp: int
+    easyrpg_battle_options: list[int]
+    easyrpg_battle_use_rpg2ke_strings: bool
+    easyrpg_default_actorai: int
+    easyrpg_default_enemyai: int
+    easyrpg_max_actor_hp: int
+    easyrpg_max_actor_sp: int
+    easyrpg_max_damage: int
+    easyrpg_max_enemy_hp: int
+    easyrpg_max_enemy_sp: int
+    easyrpg_max_exp: int
+    easyrpg_max_item_count: int
+    easyrpg_max_level: int
+    easyrpg_max_savefiles: int
+    easyrpg_max_stat_base_value: int
+    easyrpg_max_stat_battle_value: int
+    easyrpg_use_rpg2k_battle_commands: bool
+    easyrpg_use_rpg2k_battle_system: bool
+    easyrpg_variable_max_value: int
+    easyrpg_variable_min_value: int
+    enemy_attack_se: Sound
+    enemy_damaged_se: Sound
+    enemy_death_se: Sound
+    equipment_setting: int
+    escape_se: Sound
+    font_id: int
+    frame_name: str
+    gameover_music: Music
+    gameover_name: str
+    inn_music: Music
+    invert_animations: bool
+    item_se: Sound
+    ldb_id: int
+    menu_commands: list[int]
+    message_stretch: int
+    party: list[int]
+    save_count: int
+    selected_condition: int
+    selected_hero: int
+    ship_index: int
+    ship_music: Music
+    ship_name: str
+    show_frame: bool
+    show_title: bool
+    system2_name: str
+    system_name: str
+    title_music: Music
+    title_name: str
+    transition_in: int
+    transition_out: int
+class Terms:
+    accessory: str
+    actor_critical: str
+    actor_damaged: str
+    actor_hp_absorbed: str
+    actor_undamaged: str
+    agility: str
+    armor: str
+    attack: str
+    attacking: str
+    autodestruction: str
+    battle_auto: str
+    battle_escape: str
+    battle_fight: str
+    battle_start: str
+    command_attack: str
+    command_defend: str
+    command_item: str
+    command_skill: str
+    defeat: str
+    defending: str
+    defense: str
+    dodge: str
+    easyrpg_battle2k3_charge: str
+    easyrpg_battle2k3_defend: str
+    easyrpg_battle2k3_double_attack: str
+    easyrpg_battle2k3_escape: str
+    easyrpg_battle2k3_item: str
+    easyrpg_battle2k3_observe: str
+    easyrpg_battle2k3_selfdestruct: str
+    easyrpg_battle2k3_skill: str
+    easyrpg_battle2k3_special_combat_back: str
+    easyrpg_equipment_arrow: str
+    easyrpg_item_number_separator: str
+    easyrpg_order_scene_confirm: str
+    easyrpg_order_scene_redo: str
+    easyrpg_skill_cost_separator: str
+    easyrpg_status_scene_back: str
+    easyrpg_status_scene_class: str
+    easyrpg_status_scene_condition: str
+    easyrpg_status_scene_front: str
+    easyrpg_status_scene_name: str
+    easyrpg_status_scene_title: str
+    encounter: str
+    enemy_critical: str
+    enemy_damaged: str
+    enemy_escape: str
+    enemy_hp_absorbed: str
+    enemy_transform: str
+    enemy_undamaged: str
+    equipped_items: str
+    escape_failure: str
+    escape_success: str
+    exit_game: str
+    exit_game_message: str
+    exp_received: str
+    exp_short: str
+    file: str
+    focus: str
+    gold: str
+    gold_recieved_a: str
+    gold_recieved_b: str
+    health_points: str
+    helmet: str
+    hp_recovery: str
+    hp_short: str
+    inn_a_accept: str
+    inn_a_cancel: str
+    inn_a_greeting_1: str
+    inn_a_greeting_2: str
+    inn_a_greeting_3: str
+    inn_b_accept: str
+    inn_b_cancel: str
+    inn_b_greeting_1: str
+    inn_b_greeting_2: str
+    inn_b_greeting_3: str
+    item_recieved: str
+    level: str
+    level_up: str
+    load_game: str
+    load_game_message: str
+    lvl_short: str
+    menu_equipment: str
+    menu_quit: str
+    menu_save: str
+    miss: str
+    new_game: str
+    no: str
+    normal_status: str
+    observing: str
+    order: str
+    parameter_decrease: str
+    parameter_increase: str
+    possessed_items: str
+    resistance_decrease: str
+    resistance_increase: str
+    row: str
+    save_game_message: str
+    shield: str
+    shop_buy1: str
+    shop_buy2: str
+    shop_buy3: str
+    shop_buy_number1: str
+    shop_buy_number2: str
+    shop_buy_number3: str
+    shop_buy_select1: str
+    shop_buy_select2: str
+    shop_buy_select3: str
+    shop_greeting1: str
+    shop_greeting2: str
+    shop_greeting3: str
+    shop_leave1: str
+    shop_leave2: str
+    shop_leave3: str
+    shop_purchased1: str
+    shop_purchased2: str
+    shop_purchased3: str
+    shop_regreeting1: str
+    shop_regreeting2: str
+    shop_regreeting3: str
+    shop_sell1: str
+    shop_sell2: str
+    shop_sell3: str
+    shop_sell_number1: str
+    shop_sell_number2: str
+    shop_sell_number3: str
+    shop_sell_select1: str
+    shop_sell_select2: str
+    shop_sell_select3: str
+    shop_sold1: str
+    shop_sold2: str
+    shop_sold3: str
+    skill_failure_a: str
+    skill_failure_b: str
+    skill_failure_c: str
+    skill_learned: str
+    sp_cost: str
+    sp_short: str
+    special_combat: str
+    spirit: str
+    spirit_points: str
+    status: str
+    use_item: str
+    victory: str
+    wait_off: str
+    wait_on: str
+    weapon: str
+    yes: str
+class Terrain:
+    airship_land: bool
+    airship_pass: bool
+    background_a_name: str
+    background_a_scrollh: bool
+    background_a_scrollh_speed: int
+    background_a_scrollv: bool
+    background_a_scrollv_speed: int
+    background_b: bool
+    background_b_name: str
+    background_b_scrollh: bool
+    background_b_scrollh_speed: int
+    background_b_scrollv: bool
+    background_b_scrollv_speed: int
+    background_name: str
+    background_type: int
+    boat_pass: bool
+    bush_depth: int
+    damage: int
+    easyrpg_damage_can_kill: bool
+    easyrpg_damage_in_percent: bool
+    encounter_rate: int
+    footstep: Sound
+    grid_elongation: int
+    grid_inclination: int
+    grid_location: int
+    grid_top_y: int
+    id: int
+    name: str
+    on_damage_se: bool
+    ship_pass: bool
+    special_back_enemies: int
+    special_back_party: int
+    special_flags: ...
+    special_lateral_enemies: int
+    special_lateral_party: int
+    def __repr__(self) -> str:
+        ...
+class TreeMap:
+    active_node: int
+    maps: list[MapInfo]
+    start: Start
+    @property
+    def tree_order(self) -> list[int]:
+        """
+        A list of map indices in which the maps are laid out.
+        """
+    @tree_order.setter
+    def tree_order(self, arg0: list[int]) -> None:
+        ...
+class Troop:
+    appear_randomly: bool
+    auto_alignment: bool
+    id: int
+    members: list[TroopMember]
+    name: str
+    pages: list[TroopPage]
+    terrain_set: list[bool]
+    def __repr__(self) -> str:
+        ...
+class TroopMember:
+    enemy_id: int
+    id: int
+    invisible: bool
+    x: int
+    y: int
+class TroopPage:
+    condition: TroopPageCondition
+    event_commands: list[EventCommand]
+    id: int
+class TroopPageCondition:
+    actor_hp_max: int
+    actor_hp_min: int
+    actor_id: int
+    command_actor_id: int
+    command_id: int
+    enemy_hp_max: int
+    enemy_hp_min: int
+    enemy_id: int
+    fatigue_max: int
+    fatigue_min: int
+    flags: ...
+    switch_a_id: int
+    switch_b_id: int
+    turn_a: int
+    turn_actor_a: int
+    turn_actor_b: int
+    turn_actor_id: int
+    turn_b: int
+    turn_enemy_a: int
+    turn_enemy_b: int
+    turn_enemy_id: int
+    variable_id: int
+    variable_value: int
+class Variable:
+    id: int
+    name: str
+    def __repr__(self) -> str:
+        ...
+def encoding(encoding: str = '') -> str:
+    """
+    Gets or sets the current encoding used by pylcf.
+    """
+def read_lcf(path_or_id: int | str, encoding: str = '') -> Map | TreeMap | Save | Database | None:
+    """
+    Reads an LCF-compatible file.
+    
+    :param path_or_id: A path to an .ldb, .lmu, .lmt or .lsd file. If an integer,
+      it is understood as "MapXXXX.lmu".
+    :param encoding: The desired encoding to parse this file with. If empty, an
+      encoding previously determined by parsing an .ldb file will be used if exists,
+      or the system's active locale otherwise.
+    """
+def read_ldb(path: str = 'RPG_RT.ldb', encoding: str = '') -> Database | None:
+    ...
+def read_lmt(path: str = 'RPG_RT.lmt', encoding: str = '') -> TreeMap | None:
+    ...
+def read_lmu(path_or_id: int | str, encoding: str = '') -> Map | None:
+    ...

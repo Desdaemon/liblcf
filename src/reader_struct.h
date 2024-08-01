@@ -13,6 +13,14 @@
 #ifdef LCF_DEBUG_TRACE
 #include <iostream>
 #endif
+
+#ifdef WITH_PYLIB
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include "pycast.h"
+namespace py = pybind11;
+#endif
+
 #include <string>
 #include <vector>
 #include <map>
@@ -390,6 +398,9 @@ struct Field {
 	virtual void WriteXml(const S& obj, XmlWriter& stream) const = 0;
 	virtual void BeginXml(S& obj, XmlReader& stream) const = 0;
 	virtual void ParseXml(S& obj, const std::string& data) const = 0;
+	#ifdef WITH_PYLIB
+	virtual void AddPythonField(py::class_<S>& clazz) const = 0;
+	#endif
 
 	bool isPresentIfDefault(bool db_is2k3) const {
 		if (std::is_same<S,rpg::Terms>::value && db_is2k3 && (id == 0x3 || id == 0x1)) {
@@ -434,6 +445,11 @@ struct TypedField : public Field<S> {
 	bool IsDefault(const S& a, const S& b, bool) const {
 		return a.*ref == b.*ref;
 	}
+	#ifdef WITH_PYLIB
+	void AddPythonField(py::class_<S>& clazz) const {
+		clazz.def_readwrite(this->name, this->ref);
+	}
+	#endif
 
 	TypedField(T S::*ref, int id, const char* name, bool present_if_default, bool is2k3) :
 		Field<S>(id, name, present_if_default, is2k3), ref(ref) {}
@@ -487,6 +503,9 @@ struct EmptyField : public Field<S> {
 	bool IsDefault(const S& /* a */, const S& /* b */, bool) const {
 		return true;
 	}
+	#ifdef WITH_PYLIB
+	void AddPythonField(pybind11::class_<S>&) const { }
+	#endif
 
 };
 
@@ -523,6 +542,12 @@ struct SizeField : public Field<S> {
 	bool IsDefault(const S& a, const S& b, bool) const {
 		return (a.*ref).size() == (b.*ref).size();
 	}
+
+	#ifdef WITH_PYLIB
+	void AddPythonField(pybind11::class_<S>& clazz) const {
+		clazz.def_readonly(this->name, this->ref);
+	}
+	#endif
 
 	SizeField(const T S::*ref, int id, bool present_if_default, bool is2k3) :
 		Field<S>(id, "", present_if_default, is2k3), ref(ref) {}
@@ -620,7 +645,6 @@ private:
 	static const Field<S>* fields[];
 	static field_map_type field_map;
 	static tag_map_type tag_map;
-	static const char* const name;
 
 	static void MakeFieldMap();
 	static void MakeTagMap();
@@ -630,6 +654,7 @@ private:
 	template <class T> friend class StructFieldXmlHandler;
 
 public:
+	static const char* const name;
 	static void ReadLcf(S& obj, LcfReader& stream);
 	static void WriteLcf(const S& obj, LcfWriter& stream);
 	static int LcfSize(const S& obj, LcfWriter& stream);
@@ -641,6 +666,10 @@ public:
 	static int LcfSize(const std::vector<S>& obj, LcfWriter& stream);
 	static void WriteXml(const std::vector<S>& obj, XmlWriter& stream);
 	static void BeginXml(std::vector<S>& obj, XmlReader& stream);
+
+	#ifdef WITH_PYLIB
+	static void ApplyTo(py::class_<S>& clazz);
+	#endif
 };
 
 template <class S>
